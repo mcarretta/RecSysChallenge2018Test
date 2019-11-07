@@ -8,15 +8,16 @@ class TopPopRecommender(object):
     def fit(self, URM_train):
         """ --- CSR Matrix Computation --- """
         # Vector with as many ones as the number of interactions (the len of URM_train)
-        totalInteractions = np.ones([1] * len(URM_train))
+        totalInteractions = np.array([1] * len(URM_train))
 
         # Create two vectors containing the list of the playlists and of the songs
-        playlistsList, songsList = zip(*URM_train)
-        playlistsList = list(playlistsList)
-        songsList = list(songsList)
+        playlistsList, songsList = [], []
+        for tupleInURM_train in URM_train:
+            playlistsList.append(tupleInURM_train[0])
+            songsList.append(tupleInURM_train[1])
 
         # Construct the CSR matrix (no need to construct the COO and then convert it into CSR with np.tocsr())
-        self.URM_CSR = csr_matrix(totalInteractions, (np.array(playlistsList), np.array(songsList)))
+        self.URM_CSR = csr_matrix((totalInteractions, (np.array(playlistsList), np.array(songsList))))
 
         """ --- Actual Popularity computation --- """
         # Calculate item popularity by summing for each item the rating of every use
