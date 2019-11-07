@@ -58,6 +58,7 @@ def prepare_data(filename):
 
 if __name__ == "__main__":
     URM_data = prepare_data("data/train.csv")
-    topPopular = TopPopRecommender()
-    topPopular.fit(URM_data)
-    print(topPopular.recommend(10))
+    # noinspection Pylint
+    top_popular = TopPopRecommender()
+    top_popular.fit(URM_data)
+    print(top_popular.recommend(1000))
