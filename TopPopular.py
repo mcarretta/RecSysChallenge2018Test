@@ -1,28 +1,16 @@
-import csv
-from scipy.sparse import csr_matrix
 import numpy as np
+from  utils.helper import Helper
 
 
 class TopPopRecommender:
 
     def __init__(self):
-        pass
+        self.helper = Helper()
 
-    def fit(self, URM_train):
+    def fit(self):
         """ --- CSR Matrix Computation --- """
         # Vector with as many ones as the number of interactions (the len of URM_train)
-
-        total_interactions = np.array([1] * len(URM_train))
-
-        # Create two vectors containing the list of the playlists and of the songs
-        playlists_list, songs_list = [], []
-        for tuple_in_URM_train in URM_train:
-            playlists_list.append(int(tuple_in_URM_train[0]))
-            songs_list.append(int(tuple_in_URM_train[1]))
-
-        # Construct the CSR matrix (no need to construct the COO and then convert it into CSR with np.tocsr())
-        self.URM_CSR = csr_matrix((total_interactions, (np.array(playlists_list), np.array(songs_list))))
-
+        self.URM_CSR = self.helper.convert_URM_data_to_csr()
         """ --- Actual Popularity computation --- """
         # Calculate item popularity by summing for each item the rating of every use
         # The most popular playlist is the one with more songs in it
@@ -41,24 +29,10 @@ class TopPopRecommender:
 
         return recommended_items
 
-# TODO: Evaluator and MAP class
-def prepare_data(filename):
-    # Opens file and appends all the tuples of Training data to the URM.
-    # In this case, playlist i which has track j, k, l...
-    URM_tuples = []
-
-    with open(filename) as csv_input:
-        input_reader = csv.reader(csv_input, delimiter=',')
-        for row in input_reader:
-            URM_tuples.append(tuple(row))
-        csv_input.close()
-
-    return URM_tuples[1:]  # First row contains columns headers, not useful
 
 
 if __name__ == "__main__":
-    URM_data = prepare_data("data/train.csv")
     # noinspection Pylint
     top_popular = TopPopRecommender()
-    top_popular.fit(URM_data)
+    top_popular.fit()
     print(top_popular.recommend(1000))
