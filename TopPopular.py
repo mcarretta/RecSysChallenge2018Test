@@ -1,16 +1,16 @@
 import numpy as np
-from  utils.helper import Helper
-
+from utils.run import RunRecommender
 
 class TopPopRecommender:
 
     def __init__(self):
-        self.helper = Helper()
+        pass
 
-    def fit(self):
-        """ --- CSR Matrix Computation --- """
-        # Vector with as many ones as the number of interactions (the len of URM_train)
-        self.URM_CSR = self.helper.convert_URM_data_to_csr()
+    def fit(self, URM_CSR):
+        """ --- CSR Matrix Computation ---
+            Training data loading and its conversion to a CSR matrix is done in run.py with the functions provided by Helper
+        """
+        self.URM_CSR = URM_CSR
         """ --- Actual Popularity computation --- """
         # Calculate item popularity by summing for each item the rating of every use
         # The most popular playlist is the one with more songs in it
@@ -34,5 +34,5 @@ class TopPopRecommender:
 if __name__ == "__main__":
     # noinspection Pylint
     top_popular = TopPopRecommender()
-    top_popular.fit()
-    print(top_popular.recommend(1000))
+    runner = RunRecommender()
+    runner.run(top_popular)
