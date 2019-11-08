@@ -3,10 +3,13 @@ import numpy as np
 import scipy.sparse as sps
 import os
 
+# Put root project dir in a global constant
+ROOT_PROJECT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
 class Helper:
     def __init__(self):
         # Put root project dir in a constant
-        ROOT_PROJECT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         # Loading of data using pandas, that creates a new object URM_data with the first line values as attributes
         # (playlist_id, track_id) as formatted in the .csv file
         self.URM_data = pd.read_csv(os.path.join(ROOT_PROJECT_PATH, "data/train.csv"))
@@ -19,3 +22,15 @@ class Helper:
         URM = URM.tocsr()
         return URM
 
+    def load_tracks_matrix(self):
+        tracks_matrix = pd.read_csv(os.path.join(ROOT_PROJECT_PATH, "data/tracks.csv"))
+        return tracks_matrix
+
+    def load_icm_album(self):
+        tracks_matrix = self.load_tracks_matrix()
+        track_ids = np.asarray(list(tracks_matrix.track_id))
+        album_ids = np.asarray(list(tracks_matrix.album_id))
+        ratings_list = np.ones(len(track_ids))
+        icm_album = sps.coo_matrix((ratings_list, (track_ids, album_ids)))
+        icm_album = icm_album.tocsr()
+        return icm_album
