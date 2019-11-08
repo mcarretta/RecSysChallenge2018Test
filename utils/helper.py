@@ -16,6 +16,6 @@ class Helper:
     def convert_URM_data_to_csr(self):
         ratings_list = np.ones(len(self.playlists_list))
         URM = sps.coo_matrix((ratings_list, (self.playlists_list, self.tracks_list)))
-        URM.tocsr()
+        URM = URM.tocsr()
         return URM
 

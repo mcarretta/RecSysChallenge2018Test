@@ -24,8 +24,7 @@ class RunRecommender:
         recommendation_matrix_file_to_submit = open(os.path.join(ROOT_PROJECT_PATH, "data/recommendation_matrix_to_submit.csv"), "w")
         recommendation_matrix_file_to_submit.write("playlist_id,track_ids\n")
         for playlist in tqdm(target_playlists):
-            songs_recommended = recommender.recommend()
-            print(len(songs_recommended))
+            songs_recommended = recommender.recommend(int(playlist))
             songs_recommended = " ".join(str(x) for x in songs_recommended)
             playlist = playlist.replace("\n", "") # remove \n from playlist file
             recommendation_matrix_file_to_submit.write(playlist + "," + songs_recommended + "\n")

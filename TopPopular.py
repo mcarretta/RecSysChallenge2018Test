@@ -1,15 +1,19 @@
 import numpy as np
 from utils.run import RunRecommender
+from utils.helper import Helper
+import scipy.sparse
+
 
 class TopPopRecommender:
 
-    def __init__(self):
-        pass
+    def __init__(self, helper):
+        self.helper = helper
 
     def fit(self, URM_CSR):
         """ --- CSR Matrix Computation ---
             Training data loading and its conversion to a CSR matrix is done in run.py with the functions provided by Helper
         """
+        self.URM_data = self.helper.URM_data
         self.URM_CSR = URM_CSR
         """ --- Actual Popularity computation --- """
         # Calculate item popularity by summing for each item the rating of every use
@@ -24,15 +28,23 @@ class TopPopRecommender:
         # Flip order high to lower
         self.popular_items = np.flip(self.popular_items, axis=0)
 
-    def recommend(self, at=10):
-        recommended_items = self.popular_items[0:at]
+    def recommend(self, playlist_id, at=10, remove_seen = True):
+        if remove_seen:
+            unseen_items_mask = np.in1d(self.popular_items, self.URM_CSR[playlist_id].indices,  assume_unique=True, invert=True)
+
+            unseen_items = self.popular_items[unseen_items_mask]
+
+            recommended_items = unseen_items[0:at]
+
+        else:
+            recommended_items = self.popularItems[0:at]
 
         return recommended_items
 
 
 
 if __name__ == "__main__":
-    # noinspection Pylint
-    top_popular = TopPopRecommender()
+    helper = Helper()
+    top_popular = TopPopRecommender(helper)
     runner = RunRecommender()
     runner.run(top_popular)
