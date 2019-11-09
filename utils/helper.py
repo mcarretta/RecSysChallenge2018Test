@@ -16,6 +16,7 @@ class Helper:
         self.playlists_list = np.asarray(list(self.URM_data.playlist_id))
         self.tracks_list = np.asarray(list(self.URM_data.track_id))
 
+
     def convert_URM_data_to_csr(self):
         ratings_list = np.ones(len(self.playlists_list))
         URM = sps.coo_matrix((ratings_list, (self.playlists_list, self.tracks_list)))
@@ -30,7 +31,22 @@ class Helper:
         tracks_matrix = self.load_tracks_matrix()
         track_ids = np.asarray(list(tracks_matrix.track_id))
         album_ids = np.asarray(list(tracks_matrix.album_id))
-        ratings_list = np.ones(len(track_ids))
+        ratings_list = np.ones(len(album_ids))
         icm_album = sps.coo_matrix((ratings_list, (track_ids, album_ids)))
         icm_album = icm_album.tocsr()
         return icm_album
+
+    def load_icm_artist(self):
+        tracks_matrix = self.load_tracks_matrix()
+        track_ids = np.asarray(list(tracks_matrix.track_id))
+        artist_ids = np.asarray(list(tracks_matrix.artist_id))
+        ratings_list = np.ones(len(artist_ids))
+        icm_artist = sps.coo_matrix((ratings_list, (track_ids, artist_ids)))
+        icm_artist = icm_artist.tocsr()
+        return icm_artist
+
+    def load_icm_duration(self):
+        tracks_matrix = self.load_tracks_matrix()
+        track_ids = np.asarray(list(tracks_matrix.track_id))
+        tracks_lenght =  np.asarray(list(tracks_matrix.duration_sec))
+        ratings_list = np.ones(len(tracks_lenght))
