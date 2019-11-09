@@ -1,7 +1,6 @@
 import numpy as np
 from utils.run import RunRecommender
 from utils.helper import Helper
-import scipy.sparse
 
 
 class TopPopRecommender:
