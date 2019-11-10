@@ -12,7 +12,7 @@ from utils.run import RunRecommender
 
 class CBFRecomender:
 
-    def __init__(self, knn_artist = 100, knn_album = 100, shrink_artist = 2, shrink_album = 2, weight_artist = 0.45):
+    def __init__(self, knn_artist = 100, knn_album = 100, shrink_artist = 2, shrink_album = 2, weight_artist = 0.4):
         self.knn_artist = knn_artist
         self.knn_album = knn_album
         self.shrink_artist = shrink_artist
@@ -48,11 +48,26 @@ class CBFRecomender:
         scores = (scores_artist * self.weight_artist) + (scores_album * weight_album)
         return scores
 
-    def recommend(self, playlist_id, at = 10):
+    def recommend(self, playlist_id, at = 10, exclude_seen = True):
+        # Compute scores of the recommendation
         scores = self.compute_scores(playlist_id)
+
+        # Filter to exclude already seen items
+        if exclude_seen:
+            scores = self.filter_seen(playlist_id, scores)
         recommended_items = np.argsort(scores)
         recommended_items = np.flip(recommended_items, axis = 0)
         return recommended_items[:at]
+
+    def filter_seen(self, playlist_id, scores):
+        start_pos = self.URM.indptr[playlist_id]
+        end_pos = self.URM.indptr[playlist_id + 1]
+
+        user_profile = self.URM.indices[start_pos:end_pos]
+
+        scores[user_profile] = -np.inf
+
+        return scores
 
 if __name__ == "__main__":
     cbf_recommender = CBFRecomender()

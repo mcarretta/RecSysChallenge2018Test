@@ -3,10 +3,9 @@ import numpy as np
 import scipy.sparse as sps
 from sklearn import preprocessing
 import os
-
+from base.IR_feature_weighting import okapi_BM_25
 # Put root project dir in a global constant
 ROOT_PROJECT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TRACK_COLUMN,
 
 class Helper:
     def __init__(self):
@@ -23,6 +22,7 @@ class Helper:
         URM = sps.coo_matrix((ratings_list, (self.playlists_list, self.tracks_list)))
         URM = URM.tocsr()
         return URM
+
 
     def load_tracks_matrix(self):
         tracks_matrix = pd.read_csv(os.path.join(ROOT_PROJECT_PATH, "data/tracks.csv"))
@@ -45,6 +45,7 @@ class Helper:
         icm_artist = sps.coo_matrix((ratings_list, (track_ids, artist_ids)))
         icm_artist = icm_artist.tocsr()
         return icm_artist
+
 
 """
     def load_icm_duration(self):
