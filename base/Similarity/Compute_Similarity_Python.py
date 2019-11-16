@@ -12,7 +12,6 @@ import scipy.sparse as sps
 from base.Recommender_utils import check_matrix
 
 
-
 class Compute_Similarity_Python:
 
 
@@ -202,7 +201,6 @@ class Compute_Similarity_Python:
             self.dataMatrix.data[start_pos:end_pos] = np.ones(end_pos-start_pos)
 
             start_pos += blockSize
-
 
 
 

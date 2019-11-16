@@ -1,7 +1,8 @@
 import pandas as pd
 import numpy as np
 import scipy.sparse as sps
-from sklearn import preprocessing
+from sklearn.preprocessing import normalize
+from sklearn import feature_extraction
 import os
 from base.IR_feature_weighting import okapi_BM_25
 # Put root project dir in a global constant
@@ -46,14 +47,15 @@ class Helper:
         icm_artist = icm_artist.tocsr()
         return icm_artist
 
+    def bm25_normalization(self, matrix):
+        matrix_BM25 = matrix.copy().astype(np.float32)
+        matrix_BM25 = okapi_BM_25(matrix_BM25)
+        matrix_BM25 = matrix_BM25.tocsr()
+        return matrix_BM25
 
-"""
-    def load_icm_duration(self):
-        tracks_matrix = self.load_tracks_matrix()
-        track_ids = np.asarray(list(tracks_matrix.track_id))
-        tracks_lenght =  np.asarray(list(tracks_matrix.duration_sec))
-        ratings_list = np.ones(len(tracks_lenght))
-        icm_duration = sps.coo_matrix((ratings_list, (track_ids, tracks_lenght)))
-        icm_duration = icm_duration.tocsr()
-        return icm_duration
-"""
+    def tfidf_normalization(self, matrix):
+        matrix_tfidf = feature_extraction.text.TfidfTransformer().fit_transform(matrix)
+        return matrix_tfidf.tocsr()
+
+    def sklearn_normalization(self, matrix, axis=0):
+        return normalize(matrix, axis=axis, norm='l2').tocsr()

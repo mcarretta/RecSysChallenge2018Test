@@ -8,11 +8,11 @@ import numpy as np
 from base.Similarity.Compute_Similarity_Python import Compute_Similarity_Python
 from utils.helper import Helper
 from utils.run import RunRecommender
-
+from evaluation.Evaluator import Evaluator
 
 class CBFRecomender:
 
-    def __init__(self, knn_artist = 100, knn_album = 100, shrink_artist = 2, shrink_album = 2, weight_artist = 0.4):
+    def __init__(self, knn_artist = 25, knn_album = 45, shrink_artist = 0, shrink_album = 8, weight_artist = 0.15):
         self.knn_artist = knn_artist
         self.knn_album = knn_album
         self.shrink_artist = shrink_artist
@@ -33,11 +33,15 @@ class CBFRecomender:
 
         # Load ICMs from helper
         self.ICM_artist = self.helper.load_icm_artist()
-        self.ICM_album = self.helper.load_icm_album()
+        self.ICM_artist = self.helper.tfidf_normalization(self.ICM_artist)
+        self.ICM_artist = self.helper.sklearn_normalization(self.ICM_artist)
 
+
+        self.ICM_album = self.helper.load_icm_album()
+        self.ICM_album = self.helper.bm25_normalization(self.ICM_album)
         # Computing SMs
-        self.SM_artist = self.compute_similarity_cbf(self.ICM_artist, self.knn_artist, self.shrink_artist)
-        self.SM_album = self.compute_similarity_cbf(self.ICM_album, self.knn_album, self.shrink_album)
+        self.SM_artist = self.compute_similarity_cbf(self.ICM_artist, top_k=self.knn_artist, shrink=self.shrink_artist)
+        self.SM_album = self.compute_similarity_cbf(self.ICM_album, top_k=self.knn_album, shrink=self.shrink_album)
 
     def compute_scores(self, playlist_id):
         tracks_list_train = self.URM[playlist_id]
@@ -71,5 +75,7 @@ class CBFRecomender:
 
 if __name__ == "__main__":
     cbf_recommender = CBFRecomender()
+    evaluator = Evaluator()
+    evaluator.split_data_randomly()
     runner = RunRecommender()
     runner.run(cbf_recommender)
